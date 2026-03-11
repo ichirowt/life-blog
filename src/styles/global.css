@@ -304,11 +304,13 @@ hr {
 .intro__lead {
   display: block;
   font-size: 15px;
+  white-space: pre-line;
 }
 
 .intro__more {
   display: block;
   margin-top: 10px;
+  white-space: pre-line;
 }
 
 .intro--serif {

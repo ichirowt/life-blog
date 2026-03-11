@@ -191,8 +191,22 @@
 }
 
 .admin-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
   font-size: 12px;
+  line-height: 1.5;
+}
+
+.admin-label__main {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.admin-label__hint {
   color: var(--faint);
+  font-weight: 400;
 }
 
 .admin-field input,

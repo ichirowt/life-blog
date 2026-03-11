@@ -8,8 +8,8 @@ const { settings } = getThemeSettings();
   class="bits-draft-dialog"
   id="bits-draft-dialog"
   aria-labelledby="bits-draft-title"
-  data-default-author-name={settings.site.author ?? ''}
-  data-default-author-avatar={settings.site.authorAvatar ?? ''}
+  data-default-author-name={settings.page.bits.defaultAuthor.name ?? ''}
+  data-default-author-avatar={settings.page.bits.defaultAuthor.avatar ?? ''}
 >
   <form class="bits-draft-form" data-bits-draft-form>
     <div class="bits-draft-head">

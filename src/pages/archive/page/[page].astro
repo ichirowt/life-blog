@@ -9,11 +9,17 @@ import {
   getPageSlice,
   getTotalPages
 } from '../../../lib/content';
-import { groupByYear, formatMonthDay, formatISODate } from '../../../utils/format';
+import { getThemeSettings } from '../../../lib/theme-settings';
+import { groupByYear, formatMonthDay, formatISODate, joinPageSubtitleText } from '../../../utils/format';
 import { PAGE_SIZE_ARCHIVE } from '../../../../site.config.mjs';
 
 const base = import.meta.env.BASE_URL ?? '/';
 const withBase = createWithBase(base);
+const {
+  settings: {
+    page
+  }
+} = getThemeSettings();
 
 export async function getStaticPaths() {
   const archiveItems = await getArchiveEssays();
@@ -33,13 +39,21 @@ const prevHref = currentPage === 2
   : withBase(`/archive/page/${currentPage - 1}/`);
 const nextHref = currentPage < totalPages ? withBase(`/archive/page/${currentPage + 1}/`) : null;
 const pageTitle = `归档 · 第 ${currentPage} 页`;
+const subtitleText = joinPageSubtitleText(
+  page.archive.subtitle,
+  `共 ${archiveItems.length} 篇内容`,
+  `第 ${currentPage} / ${totalPages} 页`
+);
 ---
 
 <BaseLayout title={pageTitle}>
   <div class="page-header page-header--with-search">
     <div class="page-heading">
       <h1 class="page-title">归档</h1>
-      <span class="page-subtitle">共 {archiveItems.length} 篇内容 · 第 {currentPage} / {totalPages} 页 · <a href={withBase('/archive/rss.xml')}>RSS</a></span>
+      <span class="page-subtitle">
+        {subtitleText ? `${subtitleText} · ` : null}
+        <a href={withBase('/archive/rss.xml')}>RSS</a>
+      </span>
     </div>
     <div class="page-actions">
       <div

@@ -16,18 +16,20 @@ const navLabelFallback: Record<SidebarNavId, string> = {
   archive: '归档',
   about: '关于'
 };
+const homeIntroMaxLength = 240;
+const pageSubtitleMaxLength = 120;
 
 const initialResolved = getThemeSettings();
 const initialNavMap = new Map(
-  initialResolved.settings.home.sidebarNav.map((item) => [item.id, item])
+  initialResolved.settings.shell.nav.map((item) => [item.id, item])
 );
 
 const initialPayload = {
   settings: {
     ...initialResolved.settings,
-    home: {
-      ...initialResolved.settings.home,
-      sidebarNav: navIdOrder.map((id, index) => {
+    shell: {
+      ...initialResolved.settings.shell,
+      nav: navIdOrder.map((id, index) => {
         const current = initialNavMap.get(id);
         if (current) return current;
         return {
@@ -42,7 +44,7 @@ const initialPayload = {
   sources: initialResolved.sources
 };
 
-const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
+const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\u003c');
 ---
 
 <BaseLayout title="Theme Console" bodyClass="admin-page">
@@ -62,8 +64,8 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
         </header>
 
         <p class="admin-hint">
-          当前阶段仅开放受约束字段：<code>site</code> / <code>home</code> / <code>ui</code>。
-          保存后会写入 <code>src/data/settings/*.json</code>。
+          当前阶段仅开放受约束字段：<code>site</code> / <code>shell</code> / <code>home</code> /
+          <code>page</code> / <code>ui</code>。保存后会写入 <code>src/data/settings/*.json</code>。
         </p>
 
         <p id="admin-dirty-banner" class="admin-banner" hidden>你有未保存更改，离开页面会触发提醒。</p>
@@ -71,34 +73,34 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
 
         <form id="admin-form" class="admin-form" novalidate>
           <fieldset class="admin-group">
-            <legend>General</legend>
+            <legend>Site</legend>
             <div class="admin-grid">
               <label class="admin-field">
-                <span class="admin-label">站点标题（用于浏览器标题/RSS/分享）</span>
+                <span class="admin-label">
+                  <span class="admin-label__main">站点标题</span>
+                  <span class="admin-label__hint">（用于浏览器标题 / RSS / 分享）</span>
+                </span>
                 <input id="site-title" type="text" autocomplete="off" />
               </label>
               <label class="admin-field">
-                <span class="admin-label">侧栏站点名</span>
-                <input id="site-brand-title" type="text" autocomplete="off" />
-              </label>
-              <label class="admin-field admin-field--full">
-                <span class="admin-label">默认 SEO 描述（用于未单独设置 description 的页面）</span>
-                <textarea id="site-description" rows="3"></textarea>
-              </label>
-              <label class="admin-field">
-                <span class="admin-label">bits页默认作者</span>
-                <input id="site-author" type="text" autocomplete="off" />
-              </label>
-              <label class="admin-field">
-                <span class="admin-label">bits页默认头像（相对路径）</span>
-                <input id="site-author-avatar" type="text" autocomplete="off" />
-              </label>
-              <label class="admin-field">
-                <span class="admin-label">默认语言</span>
+                <span class="admin-label">
+                  <span class="admin-label__main">默认语言</span>
+                  <span class="admin-label__hint">（映射到 <code>&lt;html lang&gt;</code>）</span>
+                </span>
                 <input id="site-default-locale" type="text" autocomplete="off" />
               </label>
               <label class="admin-field admin-field--full">
-                <span class="admin-label">页脚版权行（自动附加年份）</span>
+                <span class="admin-label">
+                  <span class="admin-label__main">默认 SEO 描述</span>
+                  <span class="admin-label__hint">（用于未单独设置 description 的页面）</span>
+                </span>
+                <textarea id="site-description" rows="3"></textarea>
+              </label>
+              <label class="admin-field admin-field--full">
+                <span class="admin-label">
+                  <span class="admin-label__main">页脚版权行</span>
+                  <span class="admin-label__hint">（布局会自动附加年份范围）</span>
+                </span>
                 <input id="site-footer-copyright" type="text" autocomplete="off" />
               </label>
             </div>
@@ -107,15 +109,21 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
               <p class="admin-subtitle">Social Links</p>
               <div class="admin-grid">
                 <label class="admin-field">
-                  <span class="admin-label">GitHub 链接</span>
+                  <span class="admin-label">
+                    <span class="admin-label__main">GitHub 链接</span>
+                  </span>
                   <input id="site-social-github" type="url" inputmode="url" autocomplete="off" />
                 </label>
                 <label class="admin-field">
-                  <span class="admin-label">X / Twitter 链接</span>
+                  <span class="admin-label">
+                    <span class="admin-label__main">X / Twitter 链接</span>
+                  </span>
                   <input id="site-social-x" type="url" inputmode="url" autocomplete="off" />
                 </label>
                 <label class="admin-field">
-                  <span class="admin-label">Email</span>
+                  <span class="admin-label">
+                    <span class="admin-label__main">Email</span>
+                  </span>
                   <input id="site-social-email" type="email" inputmode="email" autocomplete="off" />
                 </label>
                 <label class="admin-toggle-row">
@@ -127,19 +135,21 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
           </fieldset>
 
           <fieldset class="admin-group">
-            <legend>Home</legend>
+            <legend>Sidebar</legend>
             <div class="admin-grid">
-              <label class="admin-field admin-field--full">
-                <span class="admin-label">侧栏引用文案</span>
-                <textarea id="home-quote" rows="4"></textarea>
-              </label>
               <label class="admin-field">
-                <span class="admin-label">Hero 预置</span>
-                <select id="home-hero-preset">
-                  <option value="default">default</option>
-                  <option value="minimal">minimal</option>
-                  <option value="none">none</option>
-                </select>
+                <span class="admin-label">
+                  <span class="admin-label__main">侧栏站点名</span>
+                  <span class="admin-label__hint">（显示在左侧站点标题）</span>
+                </span>
+                <input id="shell-brand-title" type="text" autocomplete="off" />
+              </label>
+              <label class="admin-field admin-field--full">
+                <span class="admin-label">
+                  <span class="admin-label__main">侧栏引用文案</span>
+                  <span class="admin-label__hint">（支持换行显示）</span>
+                </span>
+                <textarea id="shell-quote" rows="4"></textarea>
               </label>
             </div>
 
@@ -173,6 +183,94 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
                     </div>
                   ))
                 }
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="admin-group">
+            <legend>Home</legend>
+            <div class="admin-grid">
+              <label class="admin-field admin-field--full">
+                <span class="admin-label">
+                  <span class="admin-label__main">首页导语主文案</span>
+                </span>
+                <textarea id="home-intro-lead" rows="3" maxlength={homeIntroMaxLength}></textarea>
+              </label>
+              <label class="admin-field admin-field--full">
+                <span class="admin-label">
+                  <span class="admin-label__main">首页导语补充文案</span>
+                  <span class="admin-label__hint">（后方固定附带归档 / 随笔链接）</span>
+                </span>
+                <textarea id="home-intro-more" rows="2" maxlength={homeIntroMaxLength}></textarea>
+              </label>
+              <label class="admin-field">
+                <span class="admin-label">
+                  <span class="admin-label__main">Hero 预置</span>
+                </span>
+                <select id="home-hero-preset">
+                  <option value="default">default</option>
+                  <option value="minimal">minimal</option>
+                  <option value="none">none</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="admin-group">
+            <legend>Inner Pages</legend>
+            <div class="admin-grid">
+              <label class="admin-field">
+                <span class="admin-label">
+                  <span class="admin-label__main">随笔副标题</span>
+                  <span class="admin-label__hint">（动态计数 / RSS 固定输出）</span>
+                </span>
+                <input id="page-essay-subtitle" type="text" maxlength={pageSubtitleMaxLength} autocomplete="off" />
+              </label>
+              <label class="admin-field">
+                <span class="admin-label">
+                  <span class="admin-label__main">归档副标题</span>
+                  <span class="admin-label__hint">（动态计数 / RSS 固定输出）</span>
+                </span>
+                <input id="page-archive-subtitle" type="text" maxlength={pageSubtitleMaxLength} autocomplete="off" />
+              </label>
+              <label class="admin-field">
+                <span class="admin-label">
+                  <span class="admin-label__main">絮语副标题</span>
+                </span>
+                <input id="page-bits-subtitle" type="text" maxlength={pageSubtitleMaxLength} autocomplete="off" />
+              </label>
+              <label class="admin-field">
+                <span class="admin-label">
+                  <span class="admin-label__main">小记副标题</span>
+                  <span class="admin-label__hint">（留空则回退 memo frontmatter）</span>
+                </span>
+                <input id="page-memo-subtitle" type="text" maxlength={pageSubtitleMaxLength} autocomplete="off" />
+              </label>
+              <label class="admin-field">
+                <span class="admin-label">
+                  <span class="admin-label__main">关于页副标题</span>
+                  <span class="admin-label__hint">（可留空）</span>
+                </span>
+                <input id="page-about-subtitle" type="text" maxlength={pageSubtitleMaxLength} autocomplete="off" />
+              </label>
+            </div>
+
+            <div class="admin-subgroup">
+              <p class="admin-subtitle">Bits 默认作者</p>
+              <div class="admin-grid">
+                <label class="admin-field">
+                  <span class="admin-label">
+                    <span class="admin-label__main">默认作者名</span>
+                  </span>
+                  <input id="page-bits-author-name" type="text" autocomplete="off" />
+                </label>
+                <label class="admin-field">
+                  <span class="admin-label">
+                    <span class="admin-label__main">默认头像</span>
+                    <span class="admin-label__hint">（相对路径）</span>
+                  </span>
+                  <input id="page-bits-author-avatar" type="text" autocomplete="off" />
+                </label>
               </div>
             </div>
           </fieldset>
@@ -229,6 +327,8 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const GITHUB_HOSTS = ['github.com'];
   const X_HOSTS = ['x.com', 'twitter.com'];
+  const HOME_INTRO_MAX_LENGTH = 240;
+  const PAGE_SUBTITLE_MAX_LENGTH = 120;
 
   const form = document.getElementById('admin-form');
   const statusEl = document.getElementById('admin-status');
@@ -244,34 +344,48 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
   }
 
   const inputSiteTitle = document.getElementById('site-title');
-  const inputSiteBrandTitle = document.getElementById('site-brand-title');
   const inputSiteDescription = document.getElementById('site-description');
-  const inputSiteAuthor = document.getElementById('site-author');
-  const inputSiteAuthorAvatar = document.getElementById('site-author-avatar');
   const inputSiteDefaultLocale = document.getElementById('site-default-locale');
   const inputSiteFooterCopyright = document.getElementById('site-footer-copyright');
   const inputSiteSocialGithub = document.getElementById('site-social-github');
   const inputSiteSocialX = document.getElementById('site-social-x');
   const inputSiteSocialEmail = document.getElementById('site-social-email');
   const inputSiteSocialRss = document.getElementById('site-social-rss');
-  const inputHomeQuote = document.getElementById('home-quote');
+  const inputShellBrandTitle = document.getElementById('shell-brand-title');
+  const inputShellQuote = document.getElementById('shell-quote');
+  const inputHomeIntroLead = document.getElementById('home-intro-lead');
+  const inputHomeIntroMore = document.getElementById('home-intro-more');
+  const inputPageEssaySubtitle = document.getElementById('page-essay-subtitle');
+  const inputPageArchiveSubtitle = document.getElementById('page-archive-subtitle');
+  const inputPageBitsSubtitle = document.getElementById('page-bits-subtitle');
+  const inputPageMemoSubtitle = document.getElementById('page-memo-subtitle');
+  const inputPageAboutSubtitle = document.getElementById('page-about-subtitle');
+  const inputPageBitsAuthorName = document.getElementById('page-bits-author-name');
+  const inputPageBitsAuthorAvatar = document.getElementById('page-bits-author-avatar');
   const inputHeroPreset = document.getElementById('home-hero-preset');
   const inputCodeLineNumbers = document.getElementById('ui-code-line-numbers');
   const inputReadingEntry = document.getElementById('ui-reading-entry');
 
   if (
     !inputSiteTitle ||
-    !inputSiteBrandTitle ||
     !inputSiteDescription ||
-    !inputSiteAuthor ||
-    !inputSiteAuthorAvatar ||
     !inputSiteDefaultLocale ||
     !inputSiteFooterCopyright ||
     !inputSiteSocialGithub ||
     !inputSiteSocialX ||
     !inputSiteSocialEmail ||
     !inputSiteSocialRss ||
-    !inputHomeQuote ||
+    !inputShellBrandTitle ||
+    !inputShellQuote ||
+    !inputHomeIntroLead ||
+    !inputHomeIntroMore ||
+    !inputPageEssaySubtitle ||
+    !inputPageArchiveSubtitle ||
+    !inputPageBitsSubtitle ||
+    !inputPageMemoSubtitle ||
+    !inputPageAboutSubtitle ||
+    !inputPageBitsAuthorName ||
+    !inputPageBitsAuthorAvatar ||
     !inputHeroPreset ||
     !inputCodeLineNumbers ||
     !inputReadingEntry
@@ -283,6 +397,10 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
   const deepClone = (value) => JSON.parse(JSON.stringify(value));
 
   const normalizeMultiline = (value) => value.replace(/\r\n/g, '\n');
+  const normalizeOptionalSingleLine = (value) => {
+    const normalized = normalizeMultiline(value).trim();
+    return normalized || null;
+  };
   const normalizeEmail = (value) => value.replace(/^mailto:/i, '').trim();
   const parseOrder = (value, fallback) => {
     const next = Number.parseInt(value, 10);
@@ -331,7 +449,7 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
 
   const canonicalize = (settings) => {
     const next = deepClone(settings);
-    next.home.sidebarNav = next.home.sidebarNav
+    next.shell.nav = next.shell.nav
       .filter((item) => NAV_IDS.includes(item.id))
       .sort((a, b) => {
         if (a.order !== b.order) return a.order - b.order;
@@ -341,7 +459,7 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
   };
 
   const collectSettings = () => {
-    const sidebarNav = getNavRows().map((row, index) => {
+    const nav = getNavRows().map((row, index) => {
       const id = row.getAttribute('data-nav-id');
       const labelInput = row.querySelector('[data-nav-field="label"]');
       const orderInput = row.querySelector('[data-nav-field="order"]');
@@ -358,10 +476,7 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
     return {
       site: {
         title: inputSiteTitle.value.trim(),
-        brandTitle: inputSiteBrandTitle.value.trim(),
         description: normalizeMultiline(inputSiteDescription.value).trim(),
-        author: inputSiteAuthor.value.trim(),
-        authorAvatar: inputSiteAuthorAvatar.value.trim(),
         defaultLocale: inputSiteDefaultLocale.value.trim(),
         footer: {
           copyright: inputSiteFooterCopyright.value.trim()
@@ -373,10 +488,36 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
           rss: Boolean(inputSiteSocialRss.checked)
         }
       },
+      shell: {
+        brandTitle: inputShellBrandTitle.value.trim(),
+        quote: normalizeMultiline(inputShellQuote.value).trim(),
+        nav
+      },
       home: {
-        quote: normalizeMultiline(inputHomeQuote.value).trim(),
-        heroPresetId: inputHeroPreset.value,
-        sidebarNav
+        introLead: normalizeMultiline(inputHomeIntroLead.value).trim(),
+        introMore: normalizeMultiline(inputHomeIntroMore.value).trim(),
+        heroPresetId: inputHeroPreset.value
+      },
+      page: {
+        essay: {
+          subtitle: normalizeOptionalSingleLine(inputPageEssaySubtitle.value)
+        },
+        archive: {
+          subtitle: normalizeOptionalSingleLine(inputPageArchiveSubtitle.value)
+        },
+        bits: {
+          subtitle: normalizeOptionalSingleLine(inputPageBitsSubtitle.value),
+          defaultAuthor: {
+            name: inputPageBitsAuthorName.value.trim(),
+            avatar: inputPageBitsAuthorAvatar.value.trim()
+          }
+        },
+        memo: {
+          subtitle: normalizeOptionalSingleLine(inputPageMemoSubtitle.value)
+        },
+        about: {
+          subtitle: normalizeOptionalSingleLine(inputPageAboutSubtitle.value)
+        }
       },
       ui: {
         codeBlock: {
@@ -391,22 +532,29 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
 
   const applySettings = (settings) => {
     inputSiteTitle.value = settings.site.title || '';
-    inputSiteBrandTitle.value = settings.site.brandTitle || '';
     inputSiteDescription.value = settings.site.description || '';
-    inputSiteAuthor.value = settings.site.author || '';
-    inputSiteAuthorAvatar.value = settings.site.authorAvatar || '';
     inputSiteDefaultLocale.value = settings.site.defaultLocale || '';
     inputSiteFooterCopyright.value = settings.site.footer?.copyright || '';
     inputSiteSocialGithub.value = settings.site.socialLinks?.github || '';
     inputSiteSocialX.value = settings.site.socialLinks?.x || '';
     inputSiteSocialEmail.value = settings.site.socialLinks?.email || '';
     inputSiteSocialRss.checked = Boolean(settings.site.socialLinks?.rss);
-    inputHomeQuote.value = settings.home.quote || '';
+    inputShellBrandTitle.value = settings.shell.brandTitle || '';
+    inputShellQuote.value = settings.shell.quote || '';
+    inputHomeIntroLead.value = settings.home.introLead || '';
+    inputHomeIntroMore.value = settings.home.introMore || '';
+    inputPageEssaySubtitle.value = settings.page.essay?.subtitle || '';
+    inputPageArchiveSubtitle.value = settings.page.archive?.subtitle || '';
+    inputPageBitsSubtitle.value = settings.page.bits?.subtitle || '';
+    inputPageMemoSubtitle.value = settings.page.memo?.subtitle || '';
+    inputPageAboutSubtitle.value = settings.page.about?.subtitle || '';
+    inputPageBitsAuthorName.value = settings.page.bits?.defaultAuthor?.name || '';
+    inputPageBitsAuthorAvatar.value = settings.page.bits?.defaultAuthor?.avatar || '';
     inputHeroPreset.value = settings.home.heroPresetId || 'default';
     inputCodeLineNumbers.checked = Boolean(settings.ui?.codeBlock?.showLineNumbers);
     inputReadingEntry.checked = Boolean(settings.ui?.readingMode?.showEntry);
 
-    const navMap = new Map((settings.home.sidebarNav || []).map((item) => [item.id, item]));
+    const navMap = new Map((settings.shell.nav || []).map((item) => [item.id, item]));
     getNavRows().forEach((row, index) => {
       const id = row.getAttribute('data-nav-id');
       const current = navMap.get(id) || {};
@@ -423,9 +571,7 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
     const errors = [];
 
     if (!settings.site.title) errors.push('站点标题不能为空');
-    if (!settings.site.brandTitle) errors.push('品牌标题不能为空');
     if (!settings.site.description) errors.push('站点描述不能为空');
-    if (!settings.site.author) errors.push('作者名称不能为空');
     if (!settings.site.defaultLocale) {
       errors.push('默认语言不能为空');
     } else if (!LOCALE_RE.test(settings.site.defaultLocale)) {
@@ -437,15 +583,6 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
       errors.push('页脚版权行只允许单行文本');
     } else if (settings.site.footer.copyright.length > 120) {
       errors.push('页脚版权行不能超过 120 个字符');
-    }
-
-    if (settings.site.authorAvatar) {
-      if (settings.site.authorAvatar.startsWith('/')) {
-        errors.push('作者头像必须是相对路径，不要以 / 开头');
-      }
-      if (/^[A-Za-z]+:\/\//.test(settings.site.authorAvatar)) {
-        errors.push('作者头像 Phase 1 仅允许相对路径，不允许 URL');
-      }
     }
 
     if (settings.site.socialLinks?.github && !isAllowedHttpsUrl(settings.site.socialLinks.github, GITHUB_HOSTS)) {
@@ -461,12 +598,60 @@ const bootstrapJson = JSON.stringify(initialPayload).replace(/</g, '\\u003c');
       errors.push('RSS 显示开关必须是布尔值');
     }
 
-    if (!settings.home.quote) errors.push('侧栏引用文案不能为空');
+    if (!settings.shell.brandTitle) errors.push('侧栏站点名不能为空');
+    if (!settings.shell.quote) errors.push('侧栏引用文案不能为空');
+
+    if (!settings.home.introLead) {
+      errors.push('首页导语主文案不能为空');
+    } else if (settings.home.introLead.length > HOME_INTRO_MAX_LENGTH) {
+      errors.push('首页导语主文案不能超过 ' + HOME_INTRO_MAX_LENGTH + ' 个字符');
+    }
+
+    if (!settings.home.introMore) {
+      errors.push('首页导语补充文案不能为空');
+    } else if (settings.home.introMore.length > HOME_INTRO_MAX_LENGTH) {
+      errors.push('首页导语补充文案不能超过 ' + HOME_INTRO_MAX_LENGTH + ' 个字符');
+    }
+
+    const pageSubtitleMap = [
+      ['essay', settings.page.essay?.subtitle, '随笔副标题'],
+      ['archive', settings.page.archive?.subtitle, '归档副标题'],
+      ['bits', settings.page.bits?.subtitle, '絮语副标题'],
+      ['memo', settings.page.memo?.subtitle, '小记副标题'],
+      ['about', settings.page.about?.subtitle, '关于页副标题']
+    ];
+
+    pageSubtitleMap.forEach(([, subtitle, label]) => {
+      if (subtitle == null) return;
+      if (typeof subtitle !== 'string') {
+        errors.push(label + ' 必须是字符串或留空');
+        return;
+      }
+      if (subtitle.includes('\n') || subtitle.includes('\r')) {
+        errors.push(label + ' 只允许单行文本');
+      }
+      if (subtitle.length > PAGE_SUBTITLE_MAX_LENGTH) {
+        errors.push(label + ' 不能超过 ' + PAGE_SUBTITLE_MAX_LENGTH + ' 个字符');
+      }
+    });
+
+    if (!settings.page.bits?.defaultAuthor?.name) {
+      errors.push('Bits 默认作者名不能为空');
+    }
+    if (settings.page.bits?.defaultAuthor?.avatar) {
+      if (settings.page.bits.defaultAuthor.avatar.startsWith('/')) {
+        errors.push('Bits 默认头像必须是相对路径，不要以 / 开头');
+      }
+      if (/^[A-Za-z]+:\/\//.test(settings.page.bits.defaultAuthor.avatar)) {
+        errors.push('Bits 默认头像当前仅允许相对路径，不允许 URL');
+      }
+    }
+
     if (!HERO_PRESETS.has(settings.home.heroPresetId)) {
       errors.push('Hero 预置只允许 default/minimal/none');
     }
 
-    const nav = Array.isArray(settings.home.sidebarNav) ? settings.home.sidebarNav : [];
+    const nav = Array.isArray(settings.shell.nav) ? settings.shell.nav : [];
     if (nav.length !== NAV_IDS.length) {
       errors.push('Sidebar 导航项数量必须与既有导航一致');
     }

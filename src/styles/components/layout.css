@@ -149,6 +149,14 @@
   flex-wrap: wrap;
 }
 
+.page-header .page-heading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--header-gap);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
 .page-header .page-title {
   margin: 0;
 }
@@ -408,6 +416,13 @@
     align-items: flex-start;
   }
 
+  .page-header .page-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
   .page-header .page-subtitle {
     margin-top: 0;
   }
@@ -421,13 +436,14 @@
     flex-direction: row;
     align-items: flex-end;
     justify-content: flex-start;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
   }
 
   .page-header.page-header--about .page-actions {
     margin-left: 6px;
     margin-right: 0;
     align-self: flex-end;
+    transform: none;
   }
 
   .page-header.page-header--essay {

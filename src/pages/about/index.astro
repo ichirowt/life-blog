@@ -8,6 +8,7 @@ const base = import.meta.env.BASE_URL ?? '/';
 const withBase = createWithBase(base);
 const { settings } = getThemeSettings();
 const socialLinks = settings.site.socialLinks;
+const aboutSubtitle = settings.page.about.subtitle;
 
 type SocialActionItem = {
   key: string;
@@ -76,7 +77,10 @@ const contactItems: ContactItem[] = [
 
 <BaseLayout title="关于" bodyClass="about-page">
   <div class="page-header page-header--about">
-    <h1 class="page-title">关于</h1>
+    <div class="page-heading">
+      <h1 class="page-title">关于</h1>
+      {aboutSubtitle ? <span class="page-subtitle">{aboutSubtitle}</span> : null}
+    </div>
     {
       socialItems.length ? (
         <div class="page-actions">

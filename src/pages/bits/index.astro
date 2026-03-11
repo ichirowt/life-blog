@@ -5,8 +5,14 @@ import BitsDraftDialog from '../../components/BitsDraftDialog.astro';
 import Lightbox from '../../components/Lightbox.astro';
 import { render } from 'astro:content';
 import { getPublished } from '../../lib/content';
+import { getThemeSettings } from '../../lib/theme-settings';
 import { cleanMarkdownToText, getBitsExcerpt } from '../../utils/excerpt';
 
+const {
+  settings: {
+    page
+  }
+} = getThemeSettings();
 const bits = await getPublished('bits', {
   orderBy: (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 });
@@ -27,8 +33,10 @@ const cards = await Promise.all(
 
 <BaseLayout title="絮语">
   <div class="page-header page-header--bits">
-    <h1 class="page-title">絮语</h1>
-    <span class="page-subtitle">生活不只是长篇</span>
+    <div class="page-heading">
+      <h1 class="page-title">絮语</h1>
+      {page.bits.subtitle ? <span class="page-subtitle">{page.bits.subtitle}</span> : null}
+    </div>
   </div>
 
   <div class="bits-toolbar">

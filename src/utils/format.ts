@@ -46,3 +46,11 @@ export function formatDateTime(d: Date): string {
   const mm = String(d.getMinutes()).padStart(2, '0');
   return `${yyyyMmDd} ${hh}:${mm}`;
 }
+
+export function joinPageSubtitleText(...parts: Array<string | null | undefined>): string | null {
+  const normalized = parts
+    .map((part) => (typeof part === 'string' ? part.trim() : ''))
+    .filter(Boolean);
+
+  return normalized.length ? normalized.join(' · ') : null;
+}

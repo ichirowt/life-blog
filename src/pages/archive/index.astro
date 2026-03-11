@@ -2,11 +2,17 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import { createWithBase, getArchiveEssays, getEssaySlug, getPageSlice, getTotalPages } from '../../lib/content';
-import { groupByYear, formatMonthDay, formatISODate } from '../../utils/format';
+import { getThemeSettings } from '../../lib/theme-settings';
+import { groupByYear, formatMonthDay, formatISODate, joinPageSubtitleText } from '../../utils/format';
 import { PAGE_SIZE_ARCHIVE } from '../../../site.config.mjs';
 
 const base = import.meta.env.BASE_URL ?? '/';
 const withBase = createWithBase(base);
+const {
+  settings: {
+    page
+  }
+} = getThemeSettings();
 const archiveItems = await getArchiveEssays();
 const totalPages = getTotalPages(archiveItems.length, PAGE_SIZE_ARCHIVE);
 const currentPage = 1;
@@ -16,13 +22,17 @@ const groups = groupByYear(pageItems, (entry) => entry.data.date);
 const showPagination = totalPages > 1;
 const prevHref = null;
 const nextHref = currentPage < totalPages ? withBase(`/archive/page/${currentPage + 1}/`) : null;
+const subtitleText = joinPageSubtitleText(page.archive.subtitle, `共 ${archiveItems.length} 篇内容`);
 ---
 
 <BaseLayout title="归档">
   <div class="page-header page-header--with-search">
     <div class="page-heading">
       <h1 class="page-title">归档</h1>
-      <span class="page-subtitle">共 {archiveItems.length} 篇内容 · <a href={withBase('/archive/rss.xml')}>RSS</a></span>
+      <span class="page-subtitle">
+        {subtitleText ? `${subtitleText} · ` : null}
+        <a href={withBase('/archive/rss.xml')}>RSS</a>
+      </span>
     </div>
     <div class="page-actions">
       <div

@@ -3,11 +3,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import EssayCard from '../../components/EssayCard.astro';
 import { createWithBase, getEssaySlug, getPageSlice, getTotalPages, getVisibleEssays } from '../../lib/content';
+import { getThemeSettings } from '../../lib/theme-settings';
 import { getListExcerpt } from '../../utils/excerpt';
+import { joinPageSubtitleText } from '../../utils/format';
 import { PAGE_SIZE_ESSAY } from '../../../site.config.mjs';
 
 const base = import.meta.env.BASE_URL ?? '/';
 const withBase = createWithBase(base);
+const {
+  settings: {
+    page
+  }
+} = getThemeSettings();
 const visibleEssays = await getVisibleEssays();
 const totalPages = getTotalPages(visibleEssays.length, PAGE_SIZE_ESSAY);
 const currentPage = 1;
@@ -15,13 +22,17 @@ const pageEssays = getPageSlice(visibleEssays, currentPage, PAGE_SIZE_ESSAY);
 const showPagination = totalPages > 1;
 const prevHref = null;
 const nextHref = currentPage < totalPages ? withBase(`/essay/page/${currentPage + 1}/`) : null;
+const subtitleText = joinPageSubtitleText(page.essay.subtitle, `共 ${visibleEssays.length} 篇`);
 ---
 
 <BaseLayout title="随笔" bodyClass="essay-page">
   <div class="page-header page-header--essay page-header--with-search">
     <div class="page-heading">
       <h1 class="page-title">随笔</h1>
-      <span class="page-subtitle">随笔与杂记，共 {visibleEssays.length} 篇 · <a href={withBase('/essay/rss.xml')}>RSS</a></span>
+      <span class="page-subtitle">
+        {subtitleText ? `${subtitleText} · ` : null}
+        <a href={withBase('/essay/rss.xml')}>RSS</a>
+      </span>
     </div>
     <div class="page-actions">
       <div class="entry-search" data-entry-search data-index-url={withBase('/essay/index.json')}>

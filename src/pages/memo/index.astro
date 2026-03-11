@@ -3,8 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import Lightbox from '../../components/Lightbox.astro';
 import { getEntry, render } from 'astro:content';
+import { getThemeSettings } from '../../lib/theme-settings';
 
 const prod = import.meta.env.PROD;
+const DEFAULT_MEMO_SUBTITLE = '整理一些值得留存的片刻与回忆。';
 
 const entry = await getEntry('memo', 'index');
 if (!entry) {
@@ -14,7 +16,13 @@ if (prod && entry.data.draft) {
   throw new Error('Memo entry is marked draft...');
 }
 
+const {
+  settings: {
+    page
+  }
+} = getThemeSettings();
 const { Content, headings } = await render(entry);
+const memoSubtitle = page.memo.subtitle ?? entry.data.subtitle ?? DEFAULT_MEMO_SUBTITLE;
 
 // Build a grouped TOC: H2 as section titles, H3 as items.
 type TocItem = { text: string; slug: string };
@@ -43,7 +51,7 @@ for (const h of headings) {
 >
   <div class="page-header reader-exit-anchor">
     <h1 class="page-title">{entry.data.title}</h1>
-    {entry.data.subtitle ? <span class="page-subtitle">{entry.data.subtitle}</span> : null}
+    {memoSubtitle ? <span class="page-subtitle">{memoSubtitle}</span> : null}
     <button
       id="reader-exit"
       class="icon-button reader-exit"

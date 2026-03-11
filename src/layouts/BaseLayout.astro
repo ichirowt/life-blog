@@ -16,7 +16,7 @@ const {
 
 const { settings } = getThemeSettings();
 const siteTitle = settings.site.title;
-const brandTitle = settings.site.brandTitle ?? siteTitle;
+const brandTitle = settings.shell.brandTitle ?? siteTitle;
 const metaDescription = description ?? settings.site.description;
 const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
 const htmlLang = settings.site.defaultLocale || 'zh-CN';
