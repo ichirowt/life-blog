@@ -116,7 +116,7 @@ export default defineConfig({
   integrations: hasSiteUrl ? [sitemap({ filter: (page) => !isAdminSitemapEntry(page) })] : [],
   trailingSlash: 'always',
   build: {
-    inlineStylesheets: 'always'
+    inlineStylesheets: 'auto'
   },
   vite: {
     resolve: {

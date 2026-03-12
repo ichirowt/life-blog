@@ -1,14 +1,12 @@
-/* global.css 为公开站点的全局样式入口，只负责共享 tokens/base 与公共组件 @import 聚合。
-   @import 顺序固定：layout → lists → bits → prose → figure → callout → lightbox → code-block。
-   Theme Console 的 admin.css 改为 /admin 页面按需引入；断点变量覆盖保留在此处，不要迁移。 */
+/* global.css 为公开站点的共享样式入口，只负责 tokens/base 与跨页面共享规则。
+   公开页聚合入口分层如下：
+   - global.css：共享基础层 + layout/list/home/about/memo 等公共页面规则
+   - article.css：正文页专用（prose / figure / callout / lightbox / code-block）
+   - bits-page.css：/bits/ 专用（bits / lightbox）
+   - admin.css：/admin 页面按需引入
+   断点变量覆盖保留在此处，不要迁移。 */
 @import "./components/layout.css";
 @import "./components/lists.css";
-@import "./components/bits.css";
-@import "./components/prose.css";
-@import "./components/figure.css";
-@import "./components/callout.css";
-@import "./components/lightbox.css";
-@import "./components/code-block.css";
 
 @font-face {
   font-family: "LXGW WenKai Lite";

@@ -21,6 +21,8 @@ The format is based on Keep a Changelog, and this project aims to follow Semanti
 - 生产环境中的 `/admin/` 保持只读，并从 sitemap 中排除。
 - 首页在 Hero 与导语都关闭时会切换到更紧凑的首屏节奏，减少首屏留白。
 - Theme Console 后台样式改为仅在 `/admin/` 页面按需加载，公开页面不再携带后台样式，减少构建产物中的冗余 HTML/CSS 体积。
+- 优化公开页样式加载方式，减少多页面浏览时重复内联样式带来的 HTML 体积开销；正文页与 `/bits/` 现在会按页面场景加载对应样式，更利于浏览器缓存复用。
+- `/bits/` 页面的“碎碎念”草稿生成器改为按需加载；草稿对话框和相关脚本不再首屏加载，首次点击时才会加载。
 
 ### Fixed
 - 修复 `/admin/` 首次加载可能报错、开发环境下偶发无法保存配置的问题。
