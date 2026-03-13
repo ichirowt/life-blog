@@ -1,3 +1,5 @@
+import { toSafeHttpUrl } from '../utils/format';
+
 type LightboxImage = {
   src: string;
   alt?: string;
@@ -30,6 +32,7 @@ type LightboxController = {
 };
 
 const IMAGE_EXT = /\.(avif|webp|png|jpe?g|gif|svg)(?:$|[?#&])/i;
+const toSafeDocumentImageUrl = (value: string) => toSafeHttpUrl(value, window.location.href);
 
 const createLightboxController = (options: LightboxOptions): LightboxController | null => {
   const merged: Required<LightboxOptions> = {
@@ -151,7 +154,9 @@ const createLightboxController = (options: LightboxOptions): LightboxController 
   const updateView = () => {
     const image = currentImages[currentIndex];
     if (!image || !imageEl) return;
-    imageEl.src = image.src;
+    const nextSrc = toSafeDocumentImageUrl(image.src);
+    if (nextSrc) imageEl.src = nextSrc;
+    else imageEl.removeAttribute('src');
     imageEl.alt = image.alt ?? '';
     if (image.width) imageEl.width = image.width;
     else imageEl.removeAttribute('width');
@@ -510,8 +515,16 @@ export const initBitsLightbox = (options: LightboxOptions = {}) => {
     try {
       const parsed = JSON.parse(script.textContent) as LightboxImage[];
       if (!Array.isArray(parsed)) return null;
-      imagesCache.set(card, parsed);
-      return parsed;
+      const sanitized = parsed
+        .filter((item): item is LightboxImage => !!item && typeof item.src === 'string')
+        .map((item) => {
+          const safeSrc = toSafeDocumentImageUrl(item.src);
+          return safeSrc ? { ...item, src: safeSrc } : null;
+        })
+        .filter((item): item is LightboxImage => item !== null);
+      if (sanitized.length === 0) return null;
+      imagesCache.set(card, sanitized);
+      return sanitized;
     } catch {
       return null;
     }
@@ -572,8 +585,8 @@ const getCaption = (img: HTMLImageElement) => {
 };
 
 const getPreferredSrc = (img: HTMLImageElement, href?: string) => {
-  if (href) return href;
-  return img.currentSrc || img.src || '';
+  if (href) return toSafeDocumentImageUrl(href);
+  return toSafeDocumentImageUrl(img.currentSrc || img.src || '');
 };
 
 const isTinyImage = (img: HTMLImageElement, minSize: number) => {
@@ -661,7 +674,7 @@ export const initArticleLightbox = (options: ArticleLightboxOptions = {}) => {
       const link = item.el.closest<HTMLAnchorElement>('a[href]');
       const href = link?.href ?? '';
       const useHref = link ? shouldUseLinkHref(href, linkPrefixes) : false;
-      const nextSrc = useHref ? href : (item.el.currentSrc || item.el.src || item.image.src);
+      const nextSrc = getPreferredSrc(item.el, useHref ? href : undefined) || item.image.src;
       return {
         ...item.image,
         src: nextSrc

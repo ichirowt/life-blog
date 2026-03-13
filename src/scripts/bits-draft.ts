@@ -1,4 +1,4 @@
-import { createWithBase } from '../utils/format';
+import { createWithBase, toSafeHttpUrl } from '../utils/format';
 import { normalizeAdminBitsAvatarPath } from '../lib/admin-console/shared';
 
 type Tone = 'info' | 'error' | 'success';
@@ -64,8 +64,28 @@ const splitTags = (value: string) =>
 
 const squashTagSpaces = (value: string) => value.replace(/，/g, ',').replace(/\s{2,}/g, ' ');
 
+const escapeYamlDoubleQuoted = (value: string) =>
+  value.replace(/[\n\r\t"\\]/g, (char) => {
+    switch (char) {
+      case '\\':
+        return '\\\\';
+      case '"':
+        return '\\"';
+      case '\n':
+        return '\\n';
+      case '\r':
+        return '\\r';
+      case '\t':
+        return '\\t';
+      default:
+        return char;
+    }
+  });
+
 const quoteYaml = (value: string) =>
-  /[:#\n\r\t]|^\s|\s$|^-/.test(value) ? `"${value.replace(/"/g, '\\"')}"` : value;
+  /[:#\n\r\t\\]|^\s|\s$|^-/.test(value) ? `"${escapeYamlDoubleQuoted(value)}"` : value;
+
+const toSafeDocumentHttpUrl = (value: string) => toSafeHttpUrl(value, window.location.href);
 
 const normalizeImageSrc = (value: string) => {
   const trimmed = value.trim();
@@ -81,17 +101,17 @@ const normalizeImageSrc = (value: string) => {
 const resolvePreviewSrc = (value: string) => {
   const trimmed = value.trim();
   if (!trimmed) return '';
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^https?:\/\//i.test(trimmed)) return toSafeDocumentHttpUrl(trimmed);
   const normalizedBase = base.endsWith('/') ? base : `${base}/`;
-  if (trimmed.startsWith(normalizedBase)) return trimmed;
-  return withBase(trimmed.replace(/^\/+/, ''));
+  if (trimmed.startsWith(normalizedBase)) return toSafeDocumentHttpUrl(trimmed);
+  return toSafeDocumentHttpUrl(withBase(trimmed.replace(/^\/+/, '')));
 };
 
 const normalizeAuthorName = (value: string) => value.trim();
 const normalizeAuthorAvatar = (value: string) => normalizeAdminBitsAvatarPath(value) ?? '';
 const resolveAuthorAvatarPreviewSrc = (value: string) => {
   const normalized = normalizeAuthorAvatar(value);
-  return normalized ? withBase(normalized) : '';
+  return normalized ? toSafeDocumentHttpUrl(withBase(normalized)) : '';
 };
 
 export const initBitsDraft = (): BitsDraftController | null => {
@@ -366,15 +386,22 @@ export const initBitsDraft = (): BitsDraftController | null => {
 
   const renderIdentityAvatar = (src: string, fallback: string) => {
     if (!identityAvatarEl) return;
-    identityAvatarEl.innerHTML = '';
+    identityAvatarEl.replaceChildren();
     if (!src) {
       const span = document.createElement('span');
       span.textContent = fallback;
       identityAvatarEl.appendChild(span);
       return;
     }
+    const previewSrc = resolveAuthorAvatarPreviewSrc(src);
+    if (!previewSrc) {
+      const span = document.createElement('span');
+      span.textContent = fallback;
+      identityAvatarEl.appendChild(span);
+      return;
+    }
     const image = document.createElement('img');
-    image.src = resolveAuthorAvatarPreviewSrc(src);
+    image.src = previewSrc;
     image.alt = '';
     image.decoding = 'async';
     image.loading = 'lazy';
@@ -656,7 +683,7 @@ export const initBitsDraft = (): BitsDraftController | null => {
     if (images.length) {
       lines.push('images:');
       images.forEach((image) => {
-        lines.push(`  - src: ${image.src}`);
+        lines.push(`  - src: ${quoteYaml(image.src)}`);
         lines.push(`    width: ${image.width}`);
         lines.push(`    height: ${image.height}`);
       });

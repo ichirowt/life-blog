@@ -22,6 +22,19 @@ export function createWithBase(base: string) {
   };
 }
 
+export function toSafeHttpUrl(value: string, base?: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+
+  try {
+    const parsed = base ? new URL(trimmed, base) : new URL(trimmed);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    return parsed.toString();
+  } catch {
+    return '';
+  }
+}
+
 export function groupByYear<T>(items: T[], getDate: (item: T) => Date) {
   const map = new Map<number, T[]>();
   for (const it of items) {
