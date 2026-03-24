@@ -7,8 +7,14 @@ The format is based on Keep a Changelog, and this project aims to follow Semanti
 
 ## [Unreleased]
 
+### Changed
+- 升级 Astro 到 v6，并同步更新相关官方包，延续现有主题、内容集合与构建流程。
+- 明确 Theme Console 的生产环境边界：`/admin/` 保留只读提示，`/api/admin/settings/` 仅供本地开发使用。
+- 调整验证命令：`npm run ci` 现在用于完整校验，新增 `npm run ci:core` 作为快速回归入口。
+
 ### Fixed
 - 修复移动端首页留白以及文章、小记页标题和元信息显示异常的问题，优化手机端浏览体验。
+- 修复 Windows 下 `npm run check:preview-admin` 无法执行的问题。
 
 ## [0.3.0] - 2026-03-21
 

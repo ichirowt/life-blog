@@ -130,7 +130,7 @@ const JSON_HEADERS = {
   'cache-control': 'no-store'
 };
 
-const ADMIN_READONLY_MESSAGE = 'Theme Console 仅在本地开发环境可写；生产环境保持只读。';
+const DEV_ONLY_NOT_FOUND_RESPONSE = new Response('Not Found', { status: 404 });
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -1233,18 +1233,20 @@ const withAdminSettingsWriteLock = async <T>(task: () => Promise<T>): Promise<T>
 };
 
 export const GET: APIRoute = async () => {
-  const payload = import.meta.env.DEV
-    ? getEditableThemeSettingsState()
-    : { ok: false, mode: 'readonly', message: ADMIN_READONLY_MESSAGE };
+  if (!import.meta.env.DEV) {
+    return DEV_ONLY_NOT_FOUND_RESPONSE.clone();
+  }
+
+  const payload = getEditableThemeSettingsState();
   return new Response(JSON.stringify(payload, null, 2), {
-    status: import.meta.env.DEV && payload.ok === false ? 500 : 200,
+    status: payload.ok === false ? 500 : 200,
     headers: JSON_HEADERS
   });
 };
 
 export const POST: APIRoute = async ({ request, url }) => {
   if (!import.meta.env.DEV) {
-    return new Response('Not Found', { status: 404 });
+    return DEV_ONLY_NOT_FOUND_RESPONSE.clone();
   }
 
   const isDryRun = isDryRunWriteRequest(url);

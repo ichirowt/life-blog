@@ -38,7 +38,7 @@ const bitsAuthorAvatar = z
     const normalized = normalizeAdminBitsAvatarPath(value);
     if (normalized === undefined) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'author.avatar 只允许相对图片路径（例如 author/avatar.webp），不要带 public/、不要以 / 开头，也不要使用 URL、..、?、#'
       });
       return;
@@ -47,7 +47,7 @@ const bitsAuthorAvatar = z
     const localFilePath = getAdminBitsAvatarLocalFilePath(normalized);
     if (localFilePath && !hasProjectFile(localFilePath)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: `author.avatar 指向的本地文件不存在：${localFilePath}`
       });
     }

@@ -62,6 +62,7 @@ If execution policy blocks `npm.ps1`, use one of the following:
 
 - `npm run check`
 - `npm test`
+- `npm run ci:core`
 - `npm run ci`
 - `npm run audit:prod`
 - `npm run new:bit`
@@ -73,17 +74,19 @@ If execution policy blocks `npm.ps1`, use one of the following:
 Use them depending on the situation:
 
 ```bash
-# Quick troubleshooting: run individually as needed
+# Day-to-day regression
 npm run check
 npm test
 npm run build
+npm run ci:core
 
 # Final verification before commit
 npm run ci
 ```
 
 - `npm test` mainly covers tag utilities, shared Theme Console validation rules, and core pure-logic regressions around theme settings `revision`.
-- `npm run ci` chains type checking, tests, build, and smoke checks; in most cases this is the only command you need before committing.
+- `npm run ci:core` is the fast local regression entry.
+- `npm run ci` is the full verification entry and matches GitHub Actions.
 </details>
 
 
@@ -145,7 +148,7 @@ npm run ci
 astro-whono includes a local Theme Console for visually configuring the theme during development. After forking or cloning the project, you can take over site-level settings without first learning the entire codebase structure.
 
 <details>
-<summary><strong>🎛️ Theme Console Preview</strong></summary>
+<summary><strong>🖼️ Theme Console Preview</strong></summary>
 
 <br>
 
@@ -186,8 +189,9 @@ Then open `http://localhost:4321/admin/` in your browser.
 
 #### Production behavior
 
-- Available in development, with config saving enabled
-- Production builds remain static output and do not expose a writable admin backend
+- Theme Console is available only in local development, with config loading, validation, and saving enabled
+- Production builds remain static output; `/admin/` shows a read-only notice only
+- `/api/admin/settings/` is for local development only and should not be treated as a production API
 
 #### Compatibility for existing forks
 
@@ -207,7 +211,7 @@ Content Collections:
 
 Main routes:
 - List pages: `/archive/`, `/essay/`, `/bits/`, `/memo/`, `/about/`
-- Detail page: `/archive/[slug]` (single canonical entry point)
+- Canonical detail route: `/archive/[slug]` (`/essay/[slug]` remains as a compatibility redirect)
 
 ### Image Assets
 

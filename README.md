@@ -62,6 +62,7 @@ npm run build && npm run preview
 
 - `npm run check`
 - `npm test`
+- `npm run ci:core`
 - `npm run ci`
 - `npm run audit:prod`
 - `npm run new:bit`
@@ -73,17 +74,19 @@ npm run build && npm run preview
 推荐按场景选择：
 
 ```bash
-# 快速排查：按需单独执行
+# 日常回归
 npm run check
 npm test
 npm run build
+npm run ci:core
 
 # 提交前最终验证
 npm run ci
 ```
 
 - `npm test` 主要覆盖标签工具、Theme Console 共享校验规则，以及主题设置 `revision` 的关键纯逻辑回归。
-- `npm run ci` 会串联类型检查、测试、构建与 smoke checks；提交前通常直接执行这一条即可。
+- `npm run ci:core` 用于本地快速回归。
+- `npm run ci` 用于完整校验，与 GitHub Actions 保持一致。
 </details>
 
 
@@ -145,7 +148,7 @@ npm run ci
 astro-whono 内置本地 Theme Console，用于开发环境中可视化配置主题，在fork 或 clone 项目后，无需熟悉整个项目结构即可快速完成站点接管。
 
 <details>
-<summary><strong>🎛️ Theme Console 预览</strong></summary>
+<summary><strong>🖼️ Theme Console 预览</strong></summary>
 
 <br>
 
@@ -186,8 +189,9 @@ npm run dev
 
 #### 生产环境说明
 
-- 开发环境下可用，并支持保存配置
-- 生产构建仍然保持静态站点输出,不提供可写的后台能力
+- Theme Console 仅在本地开发环境可用，支持读取、校验和保存配置
+- 生产构建保持静态站点输出；`/admin/` 仅显示只读提示
+- `/api/admin/settings/` 仅供本地开发使用，生产环境不要依赖该接口
 
 
 #### 兼容迁移（已 fork用户）：
@@ -208,7 +212,7 @@ npm run dev
 
 主要路由：
 - 列表页：`/archive/`、`/essay/`、`/bits/`、`/memo/`、`/about/`
-- 详情页：`/archive/[slug]`（唯一入口）
+- 详情页规范入口：/archive/[slug]（/essay/[slug] 保留兼容跳转）
 
 ### 图片资源
 
