@@ -1,6 +1,6 @@
 {
   "codeBlock": {
-    "showLineNumbers": true
+    "showLineNumbers": false
   },
   "readingMode": {
     "showEntry": true
@@ -13,6 +13,6 @@
     "showReadingTime": true
   },
   "layout": {
-    "sidebarDivider": "default"
+    "sidebarDivider": "subtle"
   }
 }
