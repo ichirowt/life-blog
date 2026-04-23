@@ -42,6 +42,7 @@
 
 .prose p {
   margin: 12px 0;
+  vertical-align: baseline;
 }
 
 .prose blockquote {
@@ -265,4 +266,20 @@
   .prose td {
     padding: 0.6rem 0.8rem;
   }
+}
+/* 修正上標/下標造成的行高不一致 */
+.prose sup,
+.prose sub {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.prose sup {
+  top: -0.5em;
+}
+
+.prose sub {
+  bottom: -0.25em;
 }

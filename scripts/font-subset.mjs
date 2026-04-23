@@ -5,15 +5,15 @@ import path from 'node:path';
 const ROOT = process.cwd();
 const CHARSET_PATH = path.join(ROOT, 'tools', 'charset-common.txt');
 
-const WENKAI_INPUT = path.join(ROOT, 'tools', 'fonts-src', 'LXGWWenKaiLite-Regular.woff2');
+const WENKAI_INPUT = path.join(ROOT, 'tools', 'fonts-src', 'LXGWWenKaiTC-Regular.ttf');
 const WENKAI_OUTPUTS = {
   latin: path.join(ROOT, 'public', 'fonts', 'lxgw-wenkai-lite-latin.woff2'),
   common: path.join(ROOT, 'public', 'fonts', 'lxgw-wenkai-lite-cjk-common.woff2'),
   ext: path.join(ROOT, 'public', 'fonts', 'lxgw-wenkai-lite-cjk-ext.woff2')
 };
 
-const NOTO_REGULAR_INPUT = path.join(ROOT, 'tools', 'fonts-src', 'NotoSerifSC-Regular.ttf');
-const NOTO_SEMIBOLD_INPUT = path.join(ROOT, 'tools', 'fonts-src', 'NotoSerifSC-SemiBold.ttf');
+const NOTO_REGULAR_INPUT = path.join(ROOT, 'tools', 'fonts-src', 'NotoSerifTC-Regular.ttf');
+const NOTO_SEMIBOLD_INPUT = path.join(ROOT, 'tools', 'fonts-src', 'NotoSerifTC-SemiBold.ttf');
 const NOTO_OUTPUTS = {
   400: {
     latin: path.join(ROOT, 'public', 'fonts', 'noto-serif-sc-400-latin.woff2'),
@@ -79,7 +79,7 @@ ensurePyftsubsetAvailable();
 
 if (!existsSync(WENKAI_INPUT)) {
   failMissingSource({
-    name: 'LXGW WenKai Lite',
+    name: 'LXGW WenKai TC',
     filename: path.basename(WENKAI_INPUT),
     expectedPath: WENKAI_INPUT
   });
@@ -111,7 +111,7 @@ runSubset('wenkai-ext', [
 
 if (!existsSync(NOTO_REGULAR_INPUT)) {
   failMissingSource({
-    name: 'Noto Serif SC Regular',
+    name: 'Noto Serif TC Regular',
     filename: path.basename(NOTO_REGULAR_INPUT),
     expectedPath: NOTO_REGULAR_INPUT
   });
@@ -119,7 +119,7 @@ if (!existsSync(NOTO_REGULAR_INPUT)) {
 
 if (!existsSync(NOTO_SEMIBOLD_INPUT)) {
   failMissingSource({
-    name: 'Noto Serif SC SemiBold',
+    name: 'Noto Serif TC SemiBold',
     filename: path.basename(NOTO_SEMIBOLD_INPUT),
     expectedPath: NOTO_SEMIBOLD_INPUT
   });

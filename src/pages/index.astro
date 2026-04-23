@@ -45,37 +45,37 @@ type HomeHeadCriticalFontFace = {
 // Keep this subset aligned with the faces the home shell actually uses above the fold.
 const HOME_HEAD_CRITICAL_FONT_FACES = [
   {
-    family: 'LXGW WenKai Lite',
+    family: 'LXGW WenKai TC',
     fileName: 'lxgw-wenkai-lite-latin.woff2',
     weight: 400,
     unicodeRange: 'U+0000-00FF, U+2000-206F, U+3000-303F, U+FF00-FFEF'
   },
   {
-    family: 'LXGW WenKai Lite',
+    family: 'LXGW WenKai TC',
     fileName: 'lxgw-wenkai-lite-cjk-common.woff2',
     weight: 400,
     unicodeRange: 'U+4E00-9FFF'
   },
   {
-    family: 'Noto Serif SC',
+    family: 'Noto Serif TC',
     fileName: 'noto-serif-sc-400-latin.woff2',
     weight: 400,
     unicodeRange: 'U+0000-00FF, U+2000-206F, U+3000-303F, U+FF00-FFEF'
   },
   {
-    family: 'Noto Serif SC',
+    family: 'Noto Serif TC',
     fileName: 'noto-serif-sc-400-cjk-common.woff2',
     weight: 400,
     unicodeRange: 'U+4E00-9FFF'
   },
   {
-    family: 'Noto Serif SC',
+    family: 'Noto Serif TC',
     fileName: 'noto-serif-sc-600-latin.woff2',
     weight: 600,
     unicodeRange: 'U+0000-00FF, U+2000-206F, U+3000-303F, U+FF00-FFEF'
   },
   {
-    family: 'Noto Serif SC',
+    family: 'Noto Serif TC',
     fileName: 'noto-serif-sc-600-cjk-common.woff2',
     weight: 600,
     unicodeRange: 'U+4E00-9FFF'
@@ -126,9 +126,9 @@ const homeHeadCriticalCss = [
   --border: #333333;
   --accent: #f87171;
   --code-header-bg: #2a2a2a;
-  --font-serif: "Noto Serif TC", "Noto Serif SC", ui-serif, Georgia, "Times New Roman", "Songti TC", "Songti SC", serif;
-  --font-kaiti: "LXGW WenKai TC", "LXGW WenKai Lite", "Kaiti TC", "Kaiti SC", "STKaiti", serif;
-  --font-mono: "Sarasa Mono TC", "Sarasa Mono SC", "Noto Sans Mono CJK TC", "Noto Sans Mono CJK SC", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-serif: "Noto Serif TC", "Noto Serif SC", "PingFang TC", "STSong", "Songti TC", "Microsoft JhengHei", ui-serif, Georgia, serif;
+  --font-kaiti: "LXGW WenKai TC", "LXGW WenKai Lite", "Kaiti TC", "STKaiti", "Microsoft JhengHei", serif;
+  --font-mono: "Sarasa Mono TC", "Sarasa Mono SC", "Noto Sans Mono CJK TC", "Noto Sans Mono CJK SC", ui-monospace, monospace;
   --panel: var(--code-header-bg);
 }
 
@@ -145,6 +145,9 @@ body {
   font-family: var(--font-serif);
   line-height: 1.75;
   font-size: 16px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 img {

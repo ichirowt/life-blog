@@ -1,3 +1,5 @@
+tools/fonts-src/*
+
 # Dependencies
 node_modules/
 
