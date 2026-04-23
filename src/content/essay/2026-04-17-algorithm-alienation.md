@@ -180,3 +180,18 @@ draft: false
   <li id="fn77">Theodor W. Adorno - Wikipedia, accessed April 17, 2026, [https://en.wikipedia.org/wiki/Theodor_W._Adorno](https://en.wikipedia.org/wiki/Theodor_W._Adorno) <a href="#ref77">↩</a></li>
 </ol>
 </details>
+
+<script>
+  document.querySelectorAll('a[href^="#fn"]').forEach(link => {
+    link.addEventListener('click', () => {
+      const id = link.getAttribute('href').substring(1);
+      const target = document.getElementById(id);
+      if (target) {
+        const details = target.closest('details');
+        if (details) {
+          details.open = true;
+        }
+      }
+    });
+  });
+</script>
