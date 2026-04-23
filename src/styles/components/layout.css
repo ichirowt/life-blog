@@ -47,7 +47,7 @@
 }
 
 .sidebar__title {
-  font-family: Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 28px;
   letter-spacing: 0.5px;
   transition: transform 0.2s ease;
@@ -61,7 +61,7 @@
 .sidebar__quote {
   max-width: 220px;
   text-align: right;
-  font-family: Georgia, serif;
+  font-family: var(--font-serif);
   font-style: italic;
   font-size: 16px;
   color: var(--muted);
@@ -115,7 +115,7 @@
   opacity: 0.55;
   font-size: 14px;
   line-height: 1;
-  font-family: "LXGW WenKai Lite", "Kaiti SC", "STKaiti", serif;
+  font-family: var(--font-kaiti);
 }
 
 @media (min-width: 901px) {
@@ -560,7 +560,7 @@
   background: var(--panel);
   color: var(--text);
   border: 1px solid var(--border);
-  font-family: "LXGW WenKai Lite", "Kaiti SC", "STKaiti", serif;
+  font-family: var(--font-kaiti);
   font-size: 12px;
   line-height: 1;
   white-space: nowrap;

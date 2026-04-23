@@ -10,7 +10,7 @@
   border: 0;
   border-radius: 0;
   box-shadow: none;
-  font-family: "LXGW WenKai Lite","Kaiti SC","STKaiti",serif;
+  font-family: var(--font-kaiti);
 }
 
 

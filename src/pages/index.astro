@@ -126,6 +126,9 @@ const homeHeadCriticalCss = [
   --border: #333333;
   --accent: #f87171;
   --code-header-bg: #2a2a2a;
+  --font-serif: "Noto Serif TC", "Noto Serif SC", ui-serif, Georgia, "Times New Roman", "Songti TC", "Songti SC", serif;
+  --font-kaiti: "LXGW WenKai TC", "LXGW WenKai Lite", "Kaiti TC", "Kaiti SC", "STKaiti", serif;
+  --font-mono: "Sarasa Mono TC", "Sarasa Mono SC", "Noto Sans Mono CJK TC", "Noto Sans Mono CJK SC", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --panel: var(--code-header-bg);
 }
 
@@ -139,7 +142,7 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "Noto Serif SC", ui-serif, Georgia, "Times New Roman", "Songti SC", serif;
+  font-family: var(--font-serif);
   line-height: 1.75;
   font-size: 16px;
 }
@@ -208,7 +211,7 @@ a {
 }
 
 .sidebar__title {
-  font-family: Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 28px;
   letter-spacing: 0.5px;
 }
@@ -216,7 +219,7 @@ a {
 .sidebar__quote {
   max-width: 220px;
   text-align: right;
-  font-family: Georgia, serif;
+  font-family: var(--font-serif);
   font-style: italic;
   font-size: 16px;
   color: var(--muted);
@@ -263,7 +266,7 @@ a {
   opacity: 0.55;
   font-size: 14px;
   line-height: 1;
-  font-family: "LXGW WenKai Lite", "Kaiti SC", "STKaiti", serif;
+  font-family: var(--font-kaiti);
 }
 
 .sidebar-actions {
@@ -400,7 +403,7 @@ body[data-reading="immersive"] .reader-toggle .icon-book-open {
   -webkit-line-clamp: 3;
   line-clamp: 3;
   overflow: hidden;
-  font-family: "LXGW WenKai Lite", "Kaiti SC", "STKaiti", serif;
+  font-family: var(--font-kaiti);
 }
 
 .meta-line {

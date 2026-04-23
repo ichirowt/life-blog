@@ -68,6 +68,9 @@ const withBase = createWithBase(base);
     <link rel="icon" type="image/png" sizes="32x32" href={withBase('favicon-32x32.png')} />
     <link rel="apple-touch-icon" sizes="180x180" href={withBase('apple-touch-icon.png')} />
     <title>{fullTitle}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet" />
     {metaDescription && <meta name="description" content={metaDescription} />}
     {canonical && <link rel="canonical" href={canonical} />}
     <meta property="og:site_name" content={siteTitle} />
